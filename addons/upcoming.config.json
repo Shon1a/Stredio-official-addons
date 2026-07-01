@@ -1,0 +1,10 @@
+{
+  "id": "upcoming",
+  "$comment": "RESERVED / FUTURE. Not read by today's single-file STREDIO UI. Referenced via an entry's optional `configRef` and fetched on demand (on Configure click), never at boot — the lazy analog of stredio-translations load(code).",
+  "configSchema": {
+    "fields": [
+      { "key": "upcoming_movie", "type": "toggle", "labelKey": "sec.upcoming_movies", "default": true },
+      { "key": "upcoming_series", "type": "toggle", "labelKey": "sec.upcoming_series", "default": true }
+    ]
+  }
+}

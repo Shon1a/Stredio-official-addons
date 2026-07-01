@@ -1,0 +1,48 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate index.json (manifest) against schema
+        run: npx -y ajv-cli@5 validate --spec=draft2020 --strict=false -s schema/manifest.schema.json -d index.json
+
+      - name: Validate addons.json (collection) against schema
+        run: npx -y ajv-cli@5 validate --spec=draft2020 --strict=false -s schema/addon-collection.schema.json -d addons.json
+
+      - name: Assert protected ids + neutral-conduit (no stream sources)
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const man = JSON.parse(fs.readFileSync('index.json', 'utf8'));
+          const col = JSON.parse(fs.readFileSync('addons.json', 'utf8'));
+          const ids = col.addons.map(a => a.id);
+          const PROTECTED = ['upcoming', 'studios', 'catalog', 'providers'];
+          let fail = false;
+
+          for (const id of PROTECTED) {
+            if (!ids.includes(id)) { console.error('MISSING protected id:', id); fail = true; }
+          }
+          for (const a of col.addons) {
+            if ('transportUrl' in a) { console.error('FORBIDDEN transportUrl on', a.id); fail = true; }
+            if (Array.isArray(a.resources) && a.resources.includes('stream')) { console.error('FORBIDDEN resources:[stream] on', a.id); fail = true; }
+            if (a.section === 'official' && a.kind !== 'discovery') { console.error('official entry not kind:discovery ->', a.id); fail = true; }
+          }
+          const off = (man.collections || []).find(c => c.section === 'official');
+          if (off && typeof off.count === 'number' && off.count !== col.addons.length) {
+            console.error('manifest count', off.count, '!=', 'addons length', col.addons.length); fail = true;
+          }
+
+          if (fail) process.exit(1);
+          console.log('OK: 4 protected ids present, no stream sources, all official entries kind:discovery, counts consistent.');
+          NODE

@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "version": "2026.07.01",
+  "updated": "2026-07-01T00:00:00Z",
+  "repo": "Shon1a/Stredio-official-addons",
+  "cdn": "https://cdn.jsdelivr.net/gh/Shon1a/Stredio-official-addons@master/",
+  "collections": [
+    {
+      "id": "official",
+      "section": "official",
+      "file": "addons.json",
+      "count": 4,
+      "protectedIds": ["upcoming", "studios", "catalog", "providers"]
+    }
+  ]
+}

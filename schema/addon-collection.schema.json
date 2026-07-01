@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Shon1a/Stredio-official-addons/schema/addon-collection.schema.json",
+  "title": "Stredio Official Add-on Collection",
+  "description": "Validates addons.json — the official add-on collection payload. Structurally enforces the neutral-conduit stance: entries are metadata/discovery ONLY, never stream sources.",
+  "type": "object",
+  "required": ["schema", "version", "addons"],
+  "properties": {
+    "schema": {
+      "const": 1,
+      "$comment": "Consumers ignore any major other than 1 and fall back to their inline/default set."
+    },
+    "version": { "type": "string", "minLength": 1 },
+    "updated": { "type": "string" },
+    "repo": { "type": "string" },
+    "section": { "enum": ["official", "community"] },
+    "addons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "section", "name", "tags", "kind"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "section": { "enum": ["official", "community"] },
+          "name": { "type": "string", "minLength": 1 },
+          "version": { "type": "string" },
+          "ver": { "type": "string" },
+          "iconCls": { "type": "string" },
+          "glyph": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "defaultInstalled": { "type": "boolean" },
+          "noConfig": { "type": "boolean" },
+          "preview": { "type": "boolean" },
+          "locked": { "type": "boolean" },
+          "img": { "type": ["string", "null"] },
+          "kind": { "const": "discovery" },
+          "types": { "type": "array", "items": { "type": "string" } },
+          "resources": { "type": "array", "items": { "type": "string" } },
+          "configRef": { "type": "string" },
+          "flags": {
+            "type": "object",
+            "properties": {
+              "official": { "type": "boolean" },
+              "protected": { "type": "boolean" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "not": {
+          "anyOf": [
+            { "required": ["transportUrl"] },
+            {
+              "required": ["resources"],
+              "properties": {
+                "resources": { "contains": { "const": "stream" } }
+              }
+            }
+          ]
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

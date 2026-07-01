@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Shon1a/Stredio-official-addons/schema/manifest.schema.json",
+  "title": "Stredio Official Add-on Manifest",
+  "description": "Validates index.json — the small eager-loaded manifest that lists the collection payload files (mirrors stredio-translations/index.json listing languages).",
+  "type": "object",
+  "required": ["schema", "version", "collections"],
+  "properties": {
+    "schema": {
+      "const": 1,
+      "$comment": "Consumers ignore any major other than 1 and fall back to their inline/default set."
+    },
+    "version": { "type": "string", "minLength": 1 },
+    "updated": { "type": "string" },
+    "repo": { "type": "string" },
+    "cdn": { "type": "string" },
+    "collections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "file"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "section": { "enum": ["official", "community"] },
+          "file": { "type": "string", "minLength": 1 },
+          "count": { "type": "integer", "minimum": 0 },
+          "protectedIds": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
