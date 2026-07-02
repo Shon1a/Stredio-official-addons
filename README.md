@@ -1,8 +1,8 @@
 # Stredio-official-addons
 
-The curated **official add-on list** for [STREDIO](https://github.com/Shon1a/Stredio) — static JSON, served over jsDelivr and read straight by the browser. The STREDIO server is never involved, the same way [`stredio-translations`](https://github.com/Shon1a/stredio-translations) holds the UI text.
+The curated **official add-on list** for [STREDIO](https://github.com/Shon1a/Stredio) — static JSON, loaded by the browser at runtime and merged over the app's built-in defaults. A content repo alongside [`stredio-translations`](https://github.com/Shon1a/stredio-translations) (which holds the UI text).
 
-Entries are **metadata / discovery only**. `transportUrl` and `resources: ["stream"]` are rejected by the schema, by CI, and by the app loader — streaming add-ons are added by users themselves, in-app.
+Entries are **metadata / discovery only**. Stream sources are rejected by the schema, by CI, and by the app — streaming add-ons are added by users themselves, in-app.
 
 ## Files
 
@@ -15,11 +15,7 @@ Entries are **metadata / discovery only**. `transportUrl` and `resources: ["stre
 
 ## How it loads
 
-```
-https://cdn.jsdelivr.net/gh/Shon1a/Stredio-official-addons@master/index.json
-```
-
-The browser reads `index.json`, then the `addons.json` it points to, and merges the entries over STREDIO's built-in defaults. If the fetch fails or `schema` ≠ `1`, the built-in list stands — the CDN only ever refines existing cards or adds new ones, never removes them.
+The browser reads `index.json`, then the payload it points to, and merges the entries over STREDIO's built-in defaults. If the fetch fails or the schema version is unknown, the built-in list stands — the list only ever refines existing cards or adds new ones, never removes them.
 
 ## Entry shape
 
@@ -40,8 +36,8 @@ Card labels (type / description / tag text) are **not** here — they live in [`
 ## Editing
 
 - Never remove or rename the protected ids: `upcoming`, `studios`, `catalog`, `providers`.
-- Metadata/discovery only — no `transportUrl`, streams, or debrid config.
-- Bump `version` in both files on every change; keep `schema: 1` for additive edits.
+- Metadata / discovery only — no stream sources.
+- Bump `version` in both files on every change; keep the schema version at `1` for additive edits.
 
 CI blocks anything that breaks these rules.
 
